@@ -16,21 +16,38 @@ favnews_raw <- individuals_raw %>%
 #Atlanta DMA rule
 #NEED TO DO
 #also need to make function saying if not DMA name in georgia than say NA
-# need to manuall edit: 13wmaz and fox5 news; ABC  channel 5,2; Rock 100.5, My favorite local news outlet is News Channel 3 in Memphis.
+# need to manuall edit: 13wmaz and fox5 news; ABC  channel 5,2; Rock 100.5; My favorite local news outlet is News Channel 3 in Memphis; 
+# News channel 9 (no DMA); Whnt 19 (hunstville); Wmur channel 9 (savannah); Abc/good morning america; News24; ABC, Channel 2; Fox 6
+
+#next time, sort by DMA first and then apply rules?
+
+
 
 
 
 
 WXIA <- c("11alive","alive","Alive","11 alive","11 Alive","Channel 11","11","channel 11")
+WSB <- c("WSB", "Wsb","wsb", "WSB-TV","wsb-tv","Wsb-tv","Ch. 2", "Channel 2", "channel 2", "2")
+WTOCSav <- c("WTOC", "wtoc", "Wtoc")
+WRDW12 <- c("WRDW", "wrdw", "Wrdw", "WRDW 12", "WRDW 26", "Channel 12", "Channel 26", "Ch 12", "Ch 26",
+            "channel12", "channel26")
+WJBFAugusta <- c("WJBF", "wjbf", "Wjbf", "New Channel 6", "Channel 6", "channel 6", "Ch 6", "Ch. 6", "Wjbf 6")
 FOXlocal <- c("fox5", "FOX 5", "fox 5","Fox 5", "FOX5", "Channel 5", "channel 5", "5", "channel5", "Channel5")
+NBCAlbany <- c("WALB", "walb", "Walb", "Channel 10", "channel 10", "Ch 10", "WALB 10", "Walb 10", "walb 10")
 NBClocal <- c("WLBT", "wlbt", "WLBT11","wlbt11", "wlbt 11","WLBT 11", "Channel 3", "channel 3", "Ch 3", "channel3", "Channel3")
-CBSlocal <- c("WMAZ", "wmaz", "13WMAZ", "WMAZ13", "13wmaz","wmaz13", "wmaz 13","WMAZ 13", "Channel 13", "channel 13", "Ch 13", "channel13", "Channel13", "13")
-Coxlocal <- c("WSOC-TV", "wsoc-tv", "9WSOCTV", "WSOC", "wsoc","wsoc9", "WSOC 9", "wsoc 9","WSOC-TV 9", "Channel 9", "channel 9", "Ch 9", "channel9", "Channel9", "9")
-FOX <- c("Fox", "fox", "FOX")
-A <- c("Abc", "ABC")
-C <- c("CBS", "cbs")
-CN <- c("CNN", "cnn")
-M <- c("MSNBC", "msnbc")
+CBSlocalmacon <- c("WMAZ", "Wmaz", "wmaz", "13WMAZ", "WMAZ13", "13wmaz","wmaz13", "wmaz 13","WMAZ 13", "Channel 13", "channel 13", "Ch 13", "channel13", "Channel13", "13")
+ABClocalcolumbus <- c("WTVM", "Wtvm","wtvm", "9WTVM", "wtvm","wtvm9", "WTVM 9", "wtvm 9","Wtvm 9", "Channel 9", "channel 9", "Ch 9", "channel9", "Channel9", "9", "News leader nine")
+CBSlocalatlanta <- c("CBS 46", "cbs 46", "Cbs 46", "WGCL", "Wgcl-TV", "wgcl", "Ch 46", "Channel 46", "channel 46", "46", "channel46", "Channel46", "wgcl 46",
+                     "WGCL 46", "Wgcl 46", "Wgcl")
+FOX <- c("Fox", "fox", "FOX", "Fox News", "fox news", "Fox news", "FOX News", "Fox and friends")
+A <- c("Abc", "ABC", "abc","ABC tv news", "Abc news", "ABC News")
+C <- c("CBS", "cbs", "Cbs")
+CN <- c("CNN", "cnn", "Cnn", "CNN 10", "CNN10")
+M <- c("MSNBC", "msnbc", "Msnbc")
+N <- c("NBC", "Nbc", "nbc", "nbc news", "NBC nightly news")
+G <- c("Google", "google", "GOOGLE", "Google News", "google news")
+SM <- c("facebook", "Facebook", "FACEBOOK", "Fb", "Twitter", "twitter", "instagram", "Instagram", "tik tok",
+        "social media", "Social Media")
 
 #let's do exact ones
 #Fox
@@ -62,10 +79,16 @@ favnews_raw %<>%
   rowwise() %>% 
   mutate(MSNBC = What.is.your.favorite.local.news.outlet. %in% M)
 favnews_raw$MSNBC<-as.integer(favnews_raw$MSNBC)
+#nbc
+favnews_raw %<>% 
+  rowwise() %>% 
+  mutate(NatlNBC = What.is.your.favorite.local.news.outlet. %in% N)
+favnews_raw$NatlNBC<-as.integer(favnews_raw$NatlNBC)
+
 
 
   #works for exact
-  look <- favnews_raw %>% mutate(is.fruit = What.is.your.favorite.local.news.outlet. %in% WXIA)
+  #look <- favnews_raw %>% mutate(is.fruit = What.is.your.favorite.local.news.outlet. %in% WXIA)
   
   #works for nuance
 
@@ -84,12 +107,45 @@ favnews_raw$MSNBC<-as.integer(favnews_raw$MSNBC)
   #WMAZ
   favnews_raw %<>% 
     rowwise() %>% 
-    mutate(WMAZ = sum(str_detect(What.is.your.favorite.local.news.outlet., CBSlocal)))
-  #WSOC-TV
+    mutate(WMAZ = sum(str_detect(What.is.your.favorite.local.news.outlet., CBSlocalmacon)))
+  #WTVM
   favnews_raw %<>% 
     rowwise() %>% 
-    mutate(WSOCTV = sum(str_detect(What.is.your.favorite.local.news.outlet., Coxlocal)))
-  #WSOC-TV
+    mutate(WTVM = sum(str_detect(What.is.your.favorite.local.news.outlet., ABClocalcolumbus)))
+  #WTOC
+  favnews_raw %<>% 
+    rowwise() %>% 
+    mutate(WTOC = sum(str_detect(What.is.your.favorite.local.news.outlet., WTOCSav)))
+  #WGCL
+  favnews_raw %<>% 
+    rowwise() %>% 
+    mutate(WGCL = sum(str_detect(What.is.your.favorite.local.news.outlet., CBSlocalatlanta)))
+  #WSBTV
+  favnews_raw %<>% 
+    rowwise() %>% 
+    mutate(WSBTV = sum(str_detect(What.is.your.favorite.local.news.outlet., WSB)))
+  #WRDW
+  favnews_raw %<>% 
+    rowwise() %>% 
+    mutate(WRDW = sum(str_detect(What.is.your.favorite.local.news.outlet., WRDW12)))
+  #WJBF
+  favnews_raw %<>% 
+    rowwise() %>% 
+    mutate(WJBF = sum(str_detect(What.is.your.favorite.local.news.outlet., WJBFAugusta)))
+  #WALB
+  favnews_raw %<>% 
+    rowwise() %>% 
+    mutate(WALB = sum(str_detect(What.is.your.favorite.local.news.outlet., NBCAlbany)))
+  #GOOGLE
+  favnews_raw %<>% 
+    rowwise() %>% 
+    mutate(GOOGLE = sum(str_detect(What.is.your.favorite.local.news.outlet., G)))
+  #SOCIAL MEDIA
+  favnews_raw %<>% 
+    rowwise() %>% 
+    mutate(SOCIALMEDIA = sum(str_detect(What.is.your.favorite.local.news.outlet., SM)))
+  
+  
   
 #combine to one column 
   
@@ -103,6 +159,24 @@ favnews_raw$MSNBC<-as.integer(favnews_raw$MSNBC)
         "WLBT"
       } else if(WMAZ > 0) {
         "WMAZ"
+      } else if(WGCL > 0) {
+        "WGCL"
+      } else if(WTVM > 0) {
+        "WTVM"
+      } else if(WTOC > 0) {
+        "WTOC"
+      } else if(WSBTV > 0) {
+        "WSBTV"
+      } else if(WRDW > 0) {
+        "WRDW"
+      } else if(WJBF > 0) {
+        "WJBF"
+      } else if(WALB > 0) {
+        "WALB"
+      } else if(GOOGLE > 0) {
+        "GOOGLE"
+      } else if(SOCIALMEDIA > 0) {
+        "SOCIAL MEDIA"
       } else if(FOXNEWS > 0) {
         "FOX"
       } else if(ABC > 0) {
@@ -113,13 +187,15 @@ favnews_raw$MSNBC<-as.integer(favnews_raw$MSNBC)
         "CNN"
       } else if(MSNBC > 0) {
         "MSNBC"
+      } else if(NatlNBC > 0) {
+        "NBC"
       } else {
         "other"
       }
     )
       
       
- favnews_raw <- favnews_raw[, c(1,2,3,4,5,12,6,7,8,9,10,11,13,14,15,16)]  
+ favnews_raw <- favnews_raw[, c(1,2,3,4,5,23,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22)]  
     
   
 #test to see how many
@@ -130,6 +206,7 @@ favnews_raw$MSNBC<-as.integer(favnews_raw$MSNBC)
   table(favnews_raw$FavNewsClean)["ABC"]
   
   test <- favnews_raw[favnews_raw$FOX,TRUE, ] 
-  look <- favnews_raw[favnews_raw$FavNewsClean == "WMAZ",]
-  look <- favnews_raw[favnews_raw$WSOCTV > 0,]
+  look <- favnews_raw[favnews_raw$FavNewsClean == "WTVM",]
+  look <- favnews_raw[favnews_raw$SOCIALMEDIA > 0,]
+  look <- favnews_raw[favnews_raw$FavNewsClean == "other",]
   
