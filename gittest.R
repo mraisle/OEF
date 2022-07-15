@@ -4,7 +4,7 @@ library(ggplot2)
 library(dplyr)
 library(here)
 library(stringr)
-> library(tidyr)
+library(tidyr)
 
 
 #load csv
@@ -23,7 +23,12 @@ favnews_raw <- individuals_raw %>%
 
 #next time, sort by DMA first and then apply rules?
 
-
+#If list multiple --> NA
+#included AJC as AJC
+#all radio to RADIO
+#if not in GA --> NA
+#newspaper --> NEWSPAPER
+#151 NAs, you had 105
 
 
 
@@ -34,7 +39,7 @@ WTOCSav <- c("WTOC", "wtoc", "Wtoc")
 WRDW12 <- c("WRDW", "wrdw", "Wrdw", "WRDW 12", "WRDW 26", "Channel 12", "Channel 26", "Ch 12", "Ch 26",
             "channel12", "channel26")
 WJBFAugusta <- c("WJBF", "wjbf", "Wjbf", "New Channel 6", "Channel 6", "channel 6", "Ch 6", "Ch. 6", "Wjbf 6")
-FOXlocal <- c("fox5", "FOX 5", "fox 5","Fox 5", "FOX5", "Channel 5", "channel 5", "5", "channel5", "Channel5")
+FOXlocal <- c("fox5", "FOX 5", "fox 5","Fox 5", "FOX5", "Channel 5", "channel 5", "5", "channel5", "Channel5", "WAGA")
 NBCAlbany <- c("WALB", "walb", "Walb", "Channel 10", "channel 10", "Ch 10", "WALB 10", "Walb 10", "walb 10")
 NBClocal <- c("WLBT", "wlbt", "WLBT11","wlbt11", "wlbt 11","WLBT 11", "Channel 3", "channel 3", "Ch 3", "channel3", "Channel3")
 CBSlocalmacon <- c("WMAZ", "Wmaz", "wmaz", "13WMAZ", "WMAZ13", "13wmaz","wmaz13", "wmaz 13","WMAZ 13", "Channel 13", "channel 13", "Ch 13", "channel13", "Channel13", "13")
@@ -42,14 +47,14 @@ ABClocalcolumbus <- c("WTVM", "Wtvm","wtvm", "9WTVM", "wtvm","wtvm9", "WTVM 9", 
 CBSlocalatlanta <- c("CBS 46", "cbs 46", "Cbs 46", "WGCL", "Wgcl-TV", "wgcl", "Ch 46", "Channel 46", "channel 46", "46", "channel46", "Channel46", "wgcl 46",
                      "WGCL 46", "Wgcl 46", "Wgcl")
 FOX <- c("Fox", "fox", "FOX", "Fox News", "fox news", "Fox news", "FOX News", "Fox and friends")
-A <- c("Abc", "ABC", "abc","ABC tv news", "Abc news", "ABC News")
+A <- c("Abc", "ABC", "abc","ABC tv news", "Abc news", "ABC News", "ABC news")
 C <- c("CBS", "cbs", "Cbs")
 CN <- c("CNN", "cnn", "Cnn", "CNN 10", "CNN10")
 M <- c("MSNBC", "msnbc", "Msnbc")
 N <- c("NBC", "Nbc", "nbc", "nbc news", "NBC nightly news")
 G <- c("Google", "google", "GOOGLE", "Google News", "google news")
 SM <- c("facebook", "Facebook", "FACEBOOK", "Fb", "Twitter", "twitter", "instagram", "Instagram", "tik tok",
-        "social media", "Social Media")
+        "social media", "Social Media", "Youtube", "YouTube")
 
 #let's do exact ones
 #Fox
@@ -212,30 +217,45 @@ favnews_raw$NatlNBC<-as.integer(favnews_raw$NatlNBC)
   look <- favnews_raw[favnews_raw$SOCIALMEDIA > 0,]
   look <- favnews_raw[favnews_raw$FavNewsClean == "other",]
   
-  
-  
-  #other work 
-  
- HearCC <- individuals_raw %>%
-    select(17,39)
- 
-outmarkets <-  paste(c("Chattanooga","Jacksonville","Greenvll-Spart-Ashevll-And"), collapse = '|')
-GAonly <-  HearCC %>% filter(!grepl(outmarkets, DMA.Name)) 
+  #save
+  write.csv(favnews_raw, here("favnews_routput_GA.csv"))
 
+  #read back in updated version after deal with NAs in excel
+  update_fav <- read.csv(here("favnews_routput_GA.csv"))
+  unique(update_fav$FavNewsClean)
+  
+  sum(is.na(update_fav$FavNewsClean))
+  
+  update_fav$FavNewsClean <- as.factor(update_fav$FavNewsClean)
+  
+  #summarise by station name
+  
+  #PLOT TIME
+  #let's make a bar chart of data
+  
+  try3 <- as.data.frame(table(update_fav$FavNewsClean))
+  
+  write.csv(try3,here("stationsummary_GA.csv"))
 
-GAonly["DMA.Name"][GAonly["DMA.Name"] == ""] <- "Unknown"
-
- #ok now just need to pivot it 
+#Frequency Table
 #count total for each 
-
+  
+#remove DMAs out of Georgia 
+  HearCC <- individuals_raw %>%
+    select(17,39)
+  
+  outmarkets <-  paste(c("Chattanooga","Jacksonville","Greenvll-Spart-Ashevll-And"), collapse = '|')
+  GAonly <-  HearCC %>% filter(!grepl(outmarkets, DMA.Name)) 
+  
+  
+  GAonly["DMA.Name"][GAonly["DMA.Name"] == ""] <- "Unknown"
 
 GAonly %>%
   distinct(How.often.do.you.hear.about.climate.change.in.the.media., DMA.Name) %>%
   group_by(DMA.Name) %>%
   summarize("CC Frequency per DMA" = n())
 
-
-
+#generate table
 GAsummary <- pivot_wider(GAonly, names_from = DMA.Name, values_from = How.often.do.you.hear.about.climate.change.in.the.media.)
 
 try2<- GAonly %>% 
@@ -246,18 +266,30 @@ try2<- GAonly %>%
             OnceWeek= sum(How.often.do.you.hear.about.climate.change.in.the.media.== "At least once a week"),
             Never= sum(How.often.do.you.hear.about.climate.change.in.the.media.== "Never"))
 
+#switch r<>c
 df_transpose = t(try2)
-
-
-
-
 colnames(df_transpose) <- df_transpose [1,]
 df_transpose  <- df_transpose [-1, ] 
 
+#convert back to df
+df_transpose$`Albany, GA` <- as.data.frame(df_transpose)
 
-df_transpose <- as.data.frame(df_transpose)
+df_transpose$`Albany, GA` <- as.numeric(df_transpose$`Albany, GA`)
+df_transpose$Atlanta  <- as.numeric(df_transpose$Atlanta )
+df_transpose$'Augusta-Aiken'   <- as.numeric(df_transpose$'Augusta-Aiken'  )
+df_transpose$'Columbus, GA (Opelika, AL)'  <- as.numeric(df_transpose$'Columbus, GA (Opelika, AL)'  )
+df_transpose$Macon  <- as.numeric(df_transpose$Macon )
+df_transpose$Savannah   <- as.numeric(df_transpose$Savannah  )
+df_transpose$'Tallahassee-Thomasville'  <- as.numeric(df_transpose$'Tallahassee-Thomasville' )
+df_transpose$Unknown   <- as.numeric(df_transpose$Unknown  )
 
-df
+#create summary row and column
+df_transpose$Georgia = rowSums(df_transpose[,c(1,2,3,4,5,6,7,8)])
+df_transpose[nrow(df_transpose) + 1,] = colSums(df_transpose)
+row.names(df_transpose)[6] <- "Total"
 
 df_transpose$Georgia = rowSums(df_transpose[,c(-1)])
+
+#save
+write.csv(df_transpose,here("frequency_count_GA.csv"))
 
