@@ -26,6 +26,7 @@ natlnetworks <-  paste(c("GOOGLE","SOCIAL MEDIA","CBS","CNN","MSNBC","NBC","ABC"
 #remove FOX row by hand as to not remove local fox station
 localonly <-  stationsum %>% filter(!grepl(natlnetworks, Var1)) 
 localonly <- localonly[-c(1), ]
+localonly <- localonly[-c(10), ]
 
 #get natl counts too
 natlnetworks <-  paste(c("GOOGLE","SOCIAL MEDIA","CBS","CNN","MSNBC","NBC","ABC","FOX", "NYT", "CBN", "OAN", "BBC", "USA", "WAPO"), collapse = '|')
@@ -36,12 +37,12 @@ sum(nationalonly$Freq)
 
 top10 <- head(localonly, 10)
 
-f6c492
+top10$DMA <- c("Atlanta","Atlanta","Macon","Columbus", "Savannah", "Albany","Augusta", "Atlanta","Atlanta", "Columbus")
 
 #
 #ideas for later --> add media market back in and shade based on media market
-stationsummary <- ggplot(top10, mapping=aes(reorder(Var1,(-Freq)), y=Freq))+
-  geom_bar(stat="identity", fill="#f6c492")+
+stationsummary <- ggplot(top10, mapping=aes(reorder(Var1,(-Freq)), y=Freq, fill=DMA))+
+  geom_bar(stat="identity")+
   geom_text(aes(label=Freq, family="Georgia"), vjust=0)+
   labs(y="Number of Respondents\n", x="Station Name", title="Top 10 Cited Favorite Local News in GA\n",
        subtitle ="1Earth Pollfish survey May 2022")+

@@ -338,9 +338,11 @@
 496,-1797847881,Georgia,Atlanta,Tv,Jee news,NA,At least once a week,524,Atlanta,0.69,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,other
 498,1373761522,Georgia,Lawrenceville,Tv,Cvn,NA,At least once a week,524,Atlanta,0.69,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,other
 62,1859539671,Georgia,Unknown,My main source of news is a combination of social media sites.,My favorite local news outlet is News Channel 3 in Memphis.,NA,At least once a week,NA,,0.43,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,WLBT
-319,1761087630,Georgia,Chatsworth,Tv,News channel 3,NA,Never,575,Chattanooga,0.48,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,WLBT
+319,1761087630,Georgia,Chatsworth,Tv,News channel 3,WRBL,Never,575,Chattanooga,0.48,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,WLBT
 341,1116547542,Georgia,Chickamauga,Internet,12,NA,Several times a year,575,Chattanooga,0.43,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,WSBTV
 431,322465571,Georgia,Unknown,CNN,Whnt 19,NA,At least once a month,NA,,0.43,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,WTVM
+1,374323323,Georgia,Augusta,Mixture of sources,None,NA,At least once a month,520,Augusta-Aiken,0.62,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,other
+4,1946690603,Georgia,Dublin,No negative vibes,Fox 10,NA,Several times a year,503,Macon,0.91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,other
 50,969299904,Georgia,Warner Robins,foz news,nbc,NBC,At least once a week,503,Macon,0.62,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,NBC
 63,-1111300972,Georgia,Unknown,CNN and Fox,NBC,NBC,At least once a week,NA,,1.55,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,NBC
 90,81938723,Georgia,Lawrenceville,Social media,Nbc,NBC,At least once a month,524,Atlanta,0.91,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,NBC
@@ -380,8 +382,6 @@
 494,2125692931,Georgia,Atlanta,Newspaper,The New York,NYT,At least once a month,524,Atlanta,0.54,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,other
 80,1729433364,Georgia,Atlanta,Oan,Oan,OAN,Never,524,Atlanta,1.08,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,other
 180,209182507,Georgia,Unknown,Facebook,Oan,OAN,At least once a month,NA,,0.87,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,other
-1,374323323,Georgia,Augusta,Mixture of sources,None,NA,At least once a month,520,Augusta-Aiken,0.62,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,other
-4,1946690603,Georgia,Dublin,No negative vibes,Fox 10,NA,Several times a year,503,Macon,0.91,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,other
 439,-726545919,Georgia,Atlanta,Youtube or Joe rogan,Rock 100.5,RADIO,At least once a month,524,Atlanta,0.62,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,FOX5
 16,1714305232,Georgia,Statesboro,Radio and friends,K-love,RADIO,Several times a year,507,Savannah,1.41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,other
 21,-116867376,Georgia,Atlanta,Radio,Bbc,RADIO,Several times a year,524,Atlanta,0.43,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,other
@@ -430,9 +430,9 @@
 311,-713993598,Georgia,Woodbury,CNN,WJBF,WJBF,At least once a week,524,Atlanta,0.7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,WJBF
 383,-1289592209,Georgia,Unknown,Fox,Wjbf,WJBF,Several times a year,NA,,1.92,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,WJBF
 405,1480500885,Georgia,Unknown,Facebook,News channel 6,WJBF,Once a year or less,NA,,0.7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,WJBF
-9,435854393,Georgia,Unknown,CNN,WLBT,WLBT,At least once a month,NA,,1.33,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,WLBT
-43,774369828,Georgia,Unknown,Tv,Ch 3 news,WLBT,At least once a week,NA,,0.38,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,WLBT
-416,-1012794667,Georgia,Unknown,Abc,Channel 3 local news,WLBT,Once a year or less,NA,,0.54,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,WLBT
+9,435854393,Georgia,Unknown,CNN,WLBT,NA,At least once a month,NA,,1.33,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,WLBT
+43,774369828,Georgia,Unknown,Tv,Ch 3 news,WRBL,At least once a week,NA,,0.38,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,WLBT
+416,-1012794667,Georgia,Unknown,Abc,Channel 3 local news,WRBL,Once a year or less,NA,,0.54,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,WLBT
 29,-1362914350,Georgia,Bonaire,Reading it on my phone,13 wmaz,WMAZ,Once a year or less,503,Macon,0.48,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,WMAZ
 35,-941675323,Georgia,Macon,CNN,WMAZ,WMAZ,At least once a month,503,Macon,1.9,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,WMAZ
 39,-144556692,Georgia,Unknown,Facebook,13wmaz,WMAZ,At least once a month,NA,,0.48,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,WMAZ

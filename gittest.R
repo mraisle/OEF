@@ -42,6 +42,7 @@ WJBFAugusta <- c("WJBF", "wjbf", "Wjbf", "New Channel 6", "Channel 6", "channel 
 FOXlocal <- c("fox5", "FOX 5", "fox 5","Fox 5", "FOX5", "Channel 5", "channel 5", "5", "channel5", "Channel5", "WAGA")
 NBCAlbany <- c("WALB", "walb", "Walb", "Channel 10", "channel 10", "Ch 10", "WALB 10", "Walb 10", "walb 10")
 NBClocal <- c("WLBT", "wlbt", "WLBT11","wlbt11", "wlbt 11","WLBT 11", "Channel 3", "channel 3", "Ch 3", "channel3", "Channel3")
+#NEED TO FIX THIS LATER
 CBSlocalmacon <- c("WMAZ", "Wmaz", "wmaz", "13WMAZ", "WMAZ13", "13wmaz","wmaz13", "wmaz 13","WMAZ 13", "Channel 13", "channel 13", "Ch 13", "channel13", "Channel13", "13")
 ABClocalcolumbus <- c("WTVM", "Wtvm","wtvm", "9WTVM", "wtvm","wtvm9", "WTVM 9", "wtvm 9","Wtvm 9", "Channel 9", "channel 9", "Ch 9", "channel9", "Channel9", "9", "News leader nine")
 CBSlocalatlanta <- c("CBS 46", "cbs 46", "Cbs 46", "WGCL", "Wgcl-TV", "wgcl", "Ch 46", "Channel 46", "channel 46", "46", "channel46", "Channel46", "wgcl 46",
@@ -230,8 +231,6 @@ favnews_raw$NatlNBC<-as.integer(favnews_raw$NatlNBC)
   
   #summarise by station name
   
-  #PLOT TIME
-  #let's make a bar chart of data
   
   try3 <- as.data.frame(table(update_fav$FavNewsClean))
   
