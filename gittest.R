@@ -4,6 +4,8 @@ library(ggplot2)
 library(dplyr)
 library(here)
 library(stringr)
+> library(tidyr)
+
 
 #load csv
 
@@ -210,3 +212,52 @@ favnews_raw$NatlNBC<-as.integer(favnews_raw$NatlNBC)
   look <- favnews_raw[favnews_raw$SOCIALMEDIA > 0,]
   look <- favnews_raw[favnews_raw$FavNewsClean == "other",]
   
+  
+  
+  #other work 
+  
+ HearCC <- individuals_raw %>%
+    select(17,39)
+ 
+outmarkets <-  paste(c("Chattanooga","Jacksonville","Greenvll-Spart-Ashevll-And"), collapse = '|')
+GAonly <-  HearCC %>% filter(!grepl(outmarkets, DMA.Name)) 
+
+
+GAonly["DMA.Name"][GAonly["DMA.Name"] == ""] <- "Unknown"
+
+ #ok now just need to pivot it 
+#count total for each 
+
+
+GAonly %>%
+  distinct(How.often.do.you.hear.about.climate.change.in.the.media., DMA.Name) %>%
+  group_by(DMA.Name) %>%
+  summarize("CC Frequency per DMA" = n())
+
+
+
+GAsummary <- pivot_wider(GAonly, names_from = DMA.Name, values_from = How.often.do.you.hear.about.climate.change.in.the.media.)
+
+try2<- GAonly %>% 
+  group_by(DMA.Name) %>% 
+  summarise(Monthly= sum(How.often.do.you.hear.about.climate.change.in.the.media.== "At least once a month"), 
+            SeveralYear= sum(How.often.do.you.hear.about.climate.change.in.the.media.== "Several times a year"), 
+            Yearorless= sum(How.often.do.you.hear.about.climate.change.in.the.media.== "Once a year or less"), 
+            OnceWeek= sum(How.often.do.you.hear.about.climate.change.in.the.media.== "At least once a week"),
+            Never= sum(How.often.do.you.hear.about.climate.change.in.the.media.== "Never"))
+
+df_transpose = t(try2)
+
+
+
+
+colnames(df_transpose) <- df_transpose [1,]
+df_transpose  <- df_transpose [-1, ] 
+
+
+df_transpose <- as.data.frame(df_transpose)
+
+df
+
+df_transpose$Georgia = rowSums(df_transpose[,c(-1)])
+
