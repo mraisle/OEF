@@ -22,11 +22,11 @@ seeCC <- read.csv(here("frequency_count_GA.csv"))
 stationsum <- stationsum[order(-stationsum$Freq),]
 
 #remove national stations
-natlnetworks <-  paste(c("GOOGLE","SOCIAL MEDIA","CBS","CNN","MSNBC","NBC","ABC", "NYT", "NEWSPAPER", "RADIO"), collapse = '|')
+natlnetworks <-  paste(c("GOOGLE","SOCIAL MEDIA","CBS","CNN","MSNBC","NBC","ABC", "NYT", "RADIO", "NEWSPAPER", "BBC", "OAN", "WAPO"), collapse = '|')
 #remove FOX row by hand as to not remove local fox station
 localonly <-  stationsum %>% filter(!grepl(natlnetworks, Var1)) 
 localonly <- localonly[-c(1), ]
-localonly <- localonly[-c(10), ]
+
 
 #get natl counts too
 natlnetworks <-  paste(c("GOOGLE","SOCIAL MEDIA","CBS","CNN","MSNBC","NBC","ABC","FOX", "NYT", "CBN", "OAN", "BBC", "USA", "WAPO"), collapse = '|')
@@ -35,12 +35,10 @@ nationalonly <-  stationsum %>% filter(grepl(natlnetworks, Var1))
 nationalonly <- nationalonly[-c(2), ]
 sum(nationalonly$Freq)
 
-top10 <- head(localonly, 10)
+top10 <- head(localonly, 11)
 
-top10$DMA <- c("Atlanta","Atlanta","Macon","Columbus", "Savannah", "Albany","Augusta", "Atlanta","Atlanta", "Columbus")
+top10$DMA <- c("Atlanta","Atlanta","Macon","Columbus", "Savannah", "Albany","Augusta", "Atlanta","Atlanta", "Atlanta","Chattanooga")
 
-#
-#ideas for later --> add media market back in and shade based on media market
 stationsummary <- ggplot(top10, mapping=aes(reorder(Var1,(-Freq)), y=Freq, fill=DMA))+
   geom_bar(stat="identity")+
   geom_text(aes(label=Freq, family="Georgia"), vjust=0)+
@@ -52,7 +50,4 @@ stationsummary
 ggsave("stationsummary.png", stationsummary, path=here(), scale = 2, width=8, height=5, units=c("cm"))
 
 
-reorder(Pclass,(-count)), y = count)) +
-  
-  
-  #testing git again 
+
