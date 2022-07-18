@@ -233,6 +233,8 @@ favnews_raw$NatlNBC<-as.integer(favnews_raw$NatlNBC)
   
   
   try3 <- as.data.frame(table(update_fav$FavNewsClean))
+ try2 <-  try3[order(-try3$Freq),]
+  
   
   write.csv(try3,here("stationsummary_GA.csv"))
 
@@ -243,20 +245,14 @@ favnews_raw$NatlNBC<-as.integer(favnews_raw$NatlNBC)
   HearCC <- individuals_raw %>%
     select(17,39)
   
-  outmarkets <-  paste(c("Chattanooga","Jacksonville","Greenvll-Spart-Ashevll-And"), collapse = '|')
+  #update, originally removed Chattanooga. Now keeping Chattanooga because >11 records
+  outmarkets <-  paste(c("Jacksonville","Greenvll-Spart-Ashevll-And"), collapse = '|')
   GAonly <-  HearCC %>% filter(!grepl(outmarkets, DMA.Name)) 
-  
+  outmarketsonly <- HearCC %>% filter(grepl(outmarkets, DMA.Name))
   
   GAonly["DMA.Name"][GAonly["DMA.Name"] == ""] <- "Unknown"
 
-GAonly %>%
-  distinct(How.often.do.you.hear.about.climate.change.in.the.media., DMA.Name) %>%
-  group_by(DMA.Name) %>%
-  summarize("CC Frequency per DMA" = n())
-
-#generate table
-GAsummary <- pivot_wider(GAonly, names_from = DMA.Name, values_from = How.often.do.you.hear.about.climate.change.in.the.media.)
-
+#THIS WORKS
 try2<- GAonly %>% 
   group_by(DMA.Name) %>% 
   summarise(Monthly= sum(How.often.do.you.hear.about.climate.change.in.the.media.== "At least once a month"), 
@@ -271,11 +267,12 @@ colnames(df_transpose) <- df_transpose [1,]
 df_transpose  <- df_transpose [-1, ] 
 
 #convert back to df
-df_transpose$`Albany, GA` <- as.data.frame(df_transpose)
+df_transpose <- as.data.frame(df_transpose)
 
 df_transpose$`Albany, GA` <- as.numeric(df_transpose$`Albany, GA`)
 df_transpose$Atlanta  <- as.numeric(df_transpose$Atlanta )
 df_transpose$'Augusta-Aiken'   <- as.numeric(df_transpose$'Augusta-Aiken'  )
+df_transpose$'Chattanooga'   <- as.numeric(df_transpose$'Chattanooga'  )
 df_transpose$'Columbus, GA (Opelika, AL)'  <- as.numeric(df_transpose$'Columbus, GA (Opelika, AL)'  )
 df_transpose$Macon  <- as.numeric(df_transpose$Macon )
 df_transpose$Savannah   <- as.numeric(df_transpose$Savannah  )
@@ -283,12 +280,30 @@ df_transpose$'Tallahassee-Thomasville'  <- as.numeric(df_transpose$'Tallahassee-
 df_transpose$Unknown   <- as.numeric(df_transpose$Unknown  )
 
 #create summary row and column
-df_transpose$Georgia = rowSums(df_transpose[,c(1,2,3,4,5,6,7,8)])
+df_transpose$Georgia = rowSums(df_transpose[,c(1,2,3,4,5,6,7,8,9)])
 df_transpose[nrow(df_transpose) + 1,] = colSums(df_transpose)
 row.names(df_transpose)[6] <- "Total"
 
-df_transpose$Georgia = rowSums(df_transpose[,c(-1)])
 
 #save
 write.csv(df_transpose,here("frequency_count_GA.csv"))
 
+
+#for outmarkets 
+outmarketsonly %>%
+  distinct(How.often.do.you.hear.about.climate.change.in.the.media., DMA.Name) %>%
+  group_by(DMA.Name) %>%
+  summarize("CC Frequency per DMA" = n())
+
+outmarketsum<- outmarketsonly %>% 
+  group_by(DMA.Name) %>% 
+  summarise(Monthly= sum(How.often.do.you.hear.about.climate.change.in.the.media.== "At least once a month"), 
+            SeveralYear= sum(How.often.do.you.hear.about.climate.change.in.the.media.== "Several times a year"), 
+            Yearorless= sum(How.often.do.you.hear.about.climate.change.in.the.media.== "Once a year or less"), 
+            OnceWeek= sum(How.often.do.you.hear.about.climate.change.in.the.media.== "At least once a week"),
+            Never= sum(How.often.do.you.hear.about.climate.change.in.the.media.== "Never"))
+
+#switch r<>c
+outsum = t(outmarketsum)
+colnames(outmarketsum) <- outmarketsum [1,]
+outmarketsum  <- outmarketsum [-1, ] 
