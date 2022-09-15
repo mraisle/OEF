@@ -42,7 +42,7 @@ top10$DMA <- c("Atlanta","Atlanta","Macon","Columbus", "Savannah", "Albany","Aug
 stationsummary <- ggplot(top10, mapping=aes(reorder(Var1,(-Freq)), y=Freq, fill=DMA))+
   geom_bar(stat="identity")+
   geom_text(aes(label=Freq, family="Georgia"), vjust=0)+
-  labs(y="Number of Respondents\n", x="Station Name", title="Top 10 Cited Favorite Local News in GA\n",
+  labs(y="Number of Respondents\n", x="Station Name", title="Top 11 Cited Favorite Local News in GA\n",
        subtitle ="1Earth Pollfish survey May 2022")+
   theme_meg()
 stationsummary

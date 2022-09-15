@@ -261,13 +261,40 @@ try2<- GAonly %>%
             OnceWeek= sum(How.often.do.you.hear.about.climate.change.in.the.media.== "At least once a week"),
             Never= sum(How.often.do.you.hear.about.climate.change.in.the.media.== "Never"))
 
+
+#TRYING TO DO WEIGHTED SUM 
+weightattempt1 <- individuals_raw %>%
+  select(17,39,40)
+
+#remove outmarkets (use outmarkets vector from above)
+GAweight <-  weightattempt1 %>% filter(!grepl(outmarkets, DMA.Name)) 
+GAweight["DMA.Name"][GAweight["DMA.Name"] == ""] <- "Unknown"
+
+
+weight2<- GAweight %>% 
+  group_by(DMA.Name) %>% 
+  summarise(Monthly= sum((How.often.do.you.hear.about.climate.change.in.the.media.== "At least once a month") * Weight ), 
+            SeveralYear= sum((How.often.do.you.hear.about.climate.change.in.the.media.== "Several times a year") * Weight ), 
+            Yearorless= sum((How.often.do.you.hear.about.climate.change.in.the.media.== "Once a year or less") * Weight ), 
+            OnceWeek= sum((How.often.do.you.hear.about.climate.change.in.the.media.== "At least once a week") * Weight ),
+            Never= sum((How.often.do.you.hear.about.climate.change.in.the.media.== "Never") * Weight ))
+
 #switch r<>c
 df_transpose = t(try2)
 colnames(df_transpose) <- df_transpose [1,]
 df_transpose  <- df_transpose [-1, ] 
 
+#weighted version switch r<>c
+weight3 = t(weight2)
+colnames(weight3) <- weight3 [1,]
+weight3  <- weight3 [-1, ] 
+
 #convert back to df
 df_transpose <- as.data.frame(df_transpose)
+
+# weighted version convert back to df
+weight3 <- as.data.frame(weight3)
+
 
 df_transpose$`Albany, GA` <- as.numeric(df_transpose$`Albany, GA`)
 df_transpose$Atlanta  <- as.numeric(df_transpose$Atlanta )
@@ -285,8 +312,29 @@ df_transpose[nrow(df_transpose) + 1,] = colSums(df_transpose)
 row.names(df_transpose)[6] <- "Total"
 
 
+#weighted version 
+weight3$`Albany, GA` <- as.numeric(weight3$`Albany, GA`)
+weight3$Atlanta  <- as.numeric(weight3$Atlanta )
+weight3$'Augusta-Aiken'   <- as.numeric(weight3$'Augusta-Aiken'  )
+weight3$'Chattanooga'   <- as.numeric(weight3$'Chattanooga'  )
+weight3$'Columbus, GA (Opelika, AL)'  <- as.numeric(weight3$'Columbus, GA (Opelika, AL)'  )
+weight3$Macon  <- as.numeric(weight3$Macon )
+weight3$Savannah   <- as.numeric(weight3$Savannah  )
+weight3$'Tallahassee-Thomasville'  <- as.numeric(weight3$'Tallahassee-Thomasville' )
+weight3$Unknown   <- as.numeric(weight3$Unknown  )
+
+#create summary row and column
+weight3$Georgia = rowSums(weight3[,c(1,2,3,4,5,6,7,8,9)])
+weight3[nrow(weight3) + 1,] = colSums(weight3)
+row.names(weight3)[6] <- "Total"
+
+
+
 #save
 write.csv(df_transpose,here("frequency_count_GA.csv"))
+
+#save weighted
+write.csv(weight3,here("frequency_count_GA_weighted.csv"))
 
 
 #for outmarkets 
