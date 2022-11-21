@@ -4,7 +4,7 @@ library(rvest)
 
 
 #get title 
-liz <- read_html("muckrack/drew_k.html")
+liz <- read_html("muckrack/emily_jones.html")
 liznodes <- liz %>% html_nodes(".news-story-title") %>% html_text
 liznodes
 title <- as.data.frame(liznodes)
@@ -29,10 +29,13 @@ author <- as.data.frame(author)
 outlet <- source[seq(3, length(source), 3)]
 outlet <- as.data.frame(outlet)
 
-drew_k<- cbind(title,author,outlet,link)
+emily_jones<- cbind(title,author,outlet,link)
 
 
-all <- rbind(john,adam_wag, liz_m,gareth_m, david_b,marisa_m, drew_k)
+all <- rbind(john,adam_wag, liz_m,gareth_m, david_b,marisa_m, emily_jones)
+colnames(all)[1] <- "Title"
+
+write.csv(all, "articlesummary.csv")
 
 #END HERE
 
@@ -44,8 +47,17 @@ summary <- liz %>%
 #aside
 
 source <- as.data.frame(source)
-source <- source[-c(37,41,45,53,54,57,62,66,70,74,78,82,86),]
+# for drew source <- source[-c(37,41,45,53,54,57,62,66,70,74,78,82,86),]
+source <- source[-c(6,10,14,27,31,35,39,43,47,51),]
+
 newrow <- c("The Atlanta Journal-Constitution")
+short <- source[c(1:14)]
+short <- as.data.frame(short)
+short <- rbind(short,newrow)
 
-
+long <- source[c(15:74)]
+long <- as.data.frame(long)
+colnames(long) <- c("short")
+source <- rbind(short,long)
+colnames(source) <- c("source")
 source <- as.character(source)
