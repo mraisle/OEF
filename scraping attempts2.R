@@ -31,16 +31,31 @@ source <- liz %>%
   html_elements("a") %>%
   html_attr("href") 
 source
+outlet <- str_subset(source, "/media-outlet")
+outlet
 
 #ok so this works below, now just need to remove /media-outlet/
 #remove "/media-outlet/"
 outlet <- str_remove(outlet, "/media-outlet/")
 outlet <- str_remove(outlet, "/")
 
+#get summary
+summary <- liz %>% 
+  html_nodes(".news-story-body")
+toremove <- summary %>%
+  html_nodes(".news-story-byline") 
+xml_remove(toremove)
+
+#!!!!!remove nodes - this removes the news-story-byline node from the entire html loaded
+#it doesn't destroy the local copy, but to get this node back need to clear environment and reload
+xml_remove(toremove)
+
+#convert the parent nodes to text
+summary <- summary %>% html_text(trim=TRUE)
+summary <- as.data.frame(summary)
 
 
-
-emily_jones<- cbind(title,author,time, outlet,link)
+emily_jones<- cbind(title,author,time, outlet,link,summary)
 
 
 
@@ -53,10 +68,9 @@ write.csv(all, "articlesummary.csv")
 
 #END HERE
 
-#this is not working still need to work on this 
-summary <- liz %>% 
-  html_nodes(".news-story-body.col-12") %>% 
-  html_text()
+
+
+
 
 #aside
 
