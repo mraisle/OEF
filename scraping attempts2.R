@@ -1,13 +1,13 @@
 #now let's try the scraping way
 
 library(rvest)
+library(stringr)
 
 
 #get title 
 liz <- read_html("muckrack/emily_jones.html")
-liznodes <- liz %>% html_nodes(".news-story-title") %>% html_text
-liznodes
-title <- as.data.frame(liznodes)
+title <- liz %>% html_nodes(".news-story-title") %>% html_text
+title <- as.data.frame(title)
 
 
  #get html links 
@@ -17,29 +17,35 @@ links <- liz %>% html_nodes(".news-story-title") %>%
 link <- as.data.frame(links)
 
 
-#ok so the links and the title are always correct,
-#we have to work on these ones below to make the dataframes come out right 
+#get author
+author <- liz %>% html_nodes(".mr-byline") %>% html_text
+author <- as.data.frame(author)
 
-#ok fixed the author problem here
-author2 <- liz %>% html_nodes(".mr-byline") %>% html_text
-author2
-author2 <- as.data.frame(author2)
+#get time
+time <- liz %>% html_nodes(".timeago") %>% html_text
+time <- as.data.frame(time)
 
-#get news outlet, author, time
+#get outlet
 source <- liz %>% 
   html_nodes(".news-story-byline") %>% 
   html_elements("a") %>%
-  html_text()
-time <- source[seq(1, length(source), 3)]
-time <- as.data.frame(time)
-author <- source[seq(2, length(source), 3)]
-author <- as.data.frame(author)
-outlet <- source[seq(3, length(source), 3)]
-outlet <- as.data.frame(outlet)
+  html_attr("href") 
+source
+
+#ok so this works below, now just need to remove /media-outlet/
+#remove "/media-outlet/"
+outlet <- str_remove(outlet, "/media-outlet/")
+outlet <- str_remove(outlet, "/")
+
+
+
 
 emily_jones<- cbind(title,author,time, outlet,link)
 
 
+
+#we would want to have this at the very end of the loop, maybe just make a loop for each author and then 
+#combine by hand?
 all <- rbind(john,adam_wag, liz_m,gareth_m, david_b,marisa_m, emily_jones)
 colnames(all)[1] <- "Title"
 
@@ -69,3 +75,17 @@ colnames(long) <- c("short")
 source <- rbind(short,long)
 colnames(source) <- c("source")
 source <- as.character(source)
+
+#OLD strategy used to get the time,author, outlet, it relied on the place of these items in a larger class,
+#resulted in missteps when multiple authors on a pub 
+#get news outlet, author, time
+source <- liz %>% 
+  html_nodes(".news-story-byline") %>% 
+  html_elements("a") %>%
+  html_text()
+time <- source[seq(1, length(source), 3)]
+time <- as.data.frame(time)
+author <- source[seq(2, length(source), 3)]
+author <- as.data.frame(author)
+outlet <- source[seq(3, length(source), 3)]
+outlet <- as.data.frame(outlet)
