@@ -17,6 +17,14 @@ links <- liz %>% html_nodes(".news-story-title") %>%
 link <- as.data.frame(links)
 
 
+#ok so the links and the title are always correct,
+#we have to work on these ones below to make the dataframes come out right 
+
+#ok fixed the author problem here
+author2 <- liz %>% html_nodes(".mr-byline") %>% html_text
+author2
+author2 <- as.data.frame(author2)
+
 #get news outlet, author, time
 source <- liz %>% 
   html_nodes(".news-story-byline") %>% 
@@ -29,7 +37,7 @@ author <- as.data.frame(author)
 outlet <- source[seq(3, length(source), 3)]
 outlet <- as.data.frame(outlet)
 
-emily_jones<- cbind(title,author,outlet,link)
+emily_jones<- cbind(title,author,time, outlet,link)
 
 
 all <- rbind(john,adam_wag, liz_m,gareth_m, david_b,marisa_m, emily_jones)
