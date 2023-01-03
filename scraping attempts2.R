@@ -56,7 +56,10 @@ summary <- as.data.frame(summary)
 
 
 emily_jones<- cbind(title,author,time, outlet,link,summary)
+rm(links,source,toremove)
 
+#next step, write a loop that appends to a master df that is produced at the end
+#mindless work to do - download back all of the htmls for the authors - do this for 
 
 
 #we would want to have this at the very end of the loop, maybe just make a loop for each author and then 
