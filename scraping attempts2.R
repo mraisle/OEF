@@ -2,10 +2,11 @@
 
 library(rvest)
 library(stringr)
+library(xml2)
 
 
 #get title 
-liz <- read_html("muckrack/emily_jones.html")
+liz <- read_html("muckrack/adam_wag.html")
 title <- liz %>% html_nodes(".news-story-title") %>% html_text
 title <- as.data.frame(title)
 
@@ -44,7 +45,6 @@ summary <- liz %>%
   html_nodes(".news-story-body")
 toremove <- summary %>%
   html_nodes(".news-story-byline") 
-xml_remove(toremove)
 
 #!!!!!remove nodes - this removes the news-story-byline node from the entire html loaded
 #it doesn't destroy the local copy, but to get this node back need to clear environment and reload
@@ -58,8 +58,9 @@ summary <- as.data.frame(summary)
 emily_jones<- cbind(title,author,time, outlet,link,summary)
 rm(links,source,toremove)
 
-#next step, write a loop that appends to a master df that is produced at the end
-#mindless work to do - download back all of the htmls for the authors - do this for 
+#next step, write a loop that appends to a master df that is produced at the end -done
+#mindless work to do - download back all of the htmls for the authors - do this for each back idk at least 2 yrs?
+#put them all in one folder so the loop can read from the same place - naming convention should be authorfullname_pagex.html
 
 
 #we would want to have this at the very end of the loop, maybe just make a loop for each author and then 

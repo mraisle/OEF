@@ -86,7 +86,7 @@ data <- page %>%
 print(data[[1]]$listProducts)
 
 library(RSelenium)
-
+library(V8)
 
 remDr <- rsDriver(browser='chrome', port=4444L)
 browser <- remDr$client
@@ -97,3 +97,7 @@ browser$navigate("https://muckrack.com/john-deem/articles")
 #options to move forwrad
 - try these options to get rselenium to work - https://stackoverflow.com/questions/31124702/rselenium-unknownerror-java-lang-illegalstateexception-with-google-chrome/31188481#31188481
 
+
+library(httr)
+r <-GET("https://muckrack.com/john-deem/articles")
+json <- content(r,as="parsed")
