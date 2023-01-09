@@ -84,7 +84,7 @@ marisa <- together[grep("Marisa Mecke", together$author), ]
 
 load("cleandataset.rda")
 save(together_authors, file="fulldata.rda")
-write.csv(together_authors, "fulldata.csv")
+write.csv(together_authors, "fulldata2.csv")
 together_authors <- read.csv("fulldata.csv")
 
 together_authors <- together_authors %>% subset(select = -c(X))
@@ -113,4 +113,6 @@ colnames(together_authors) <- c("Article Title", "Key Author", "Date Published",
 
 #convert time to readable format for shiny 
 test <- anydate(together_authors$`Date Published`)
+
+together_authors$`Date Published` <- anydate(together_authors$`Date Published`)
 
