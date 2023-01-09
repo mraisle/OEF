@@ -1,5 +1,8 @@
 #testing files
 
+library(dplyr)
+library(anytime)
+
 
 #together <- data.frame()
 #get list of the files
@@ -77,5 +80,37 @@ marisa <- together[grep("Marisa Mecke", together$author), ]
 
 
 
-Liz McLaughlin
+#ok, we should make an author column that is "main author"
+
+load("cleandataset.rda")
+save(together_authors, file="fulldata.rda")
+write.csv(together_authors, "fulldata.csv")
+together_authors <- read.csv("fulldata.csv")
+
+together_authors <- together_authors %>% subset(select = -c(X))
+
+#CHANGES TO DATAFRAME ONCE THE LOOP HAS RUN 
+#make the link clickable in shiny 
+together_authors$links <- paste0("<a href='",together_authors$links,"'>","Link to Article","</a>")
+
+
+#make the authors searchable 
+together_authors <- together %>% 
+  mutate(MainAuthor = case_when(str_detect(author, "Adam Wagner" ) ~ "Adam Wagner",
+                                str_detect(author, "Liz McLaughlin" ) ~ "Liz McLaughlin",
+                                str_detect(author, "John Deem" ) ~ "John Deem",
+                                str_detect(author, "Gareth McGrath" ) ~ "Gareth McGrath",
+                                str_detect(author, "David Boraks" ) ~ "David Boraks",
+                                str_detect(author, "Emily Jones" ) ~ "Emily Jones",
+                                str_detect(author, "Drew Kann" ) ~ "Drew Kann",
+                                str_detect(author, "Marisa Mecke" ) ~ "Marisa Mecke"))
+
+ #this is only the right reorder when already reordered, will need to modify to put into the loop script.                         
+together_authors <- together_authors[, c(2,1,4,5,7,6,3)]
+
+#rename columns 
+colnames(together_authors) <- c("Article Title", "Key Author", "Date Published", "News Outlet","Preview","Link","All Authors")
+
+#convert time to readable format for shiny 
+test <- anydate(together_authors$`Date Published`)
 

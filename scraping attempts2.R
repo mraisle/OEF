@@ -6,7 +6,7 @@ library(xml2)
 
 
 #get title 
-liz <- read_html("muckrack/adam_wag.html")
+liz <- read_html("muckrack/adam_w_pa.html")
 title <- liz %>% html_nodes(".news-story-title") %>% html_text
 title <- as.data.frame(title)
 

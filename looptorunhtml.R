@@ -67,6 +67,18 @@ rm(current,links,source,toremove,link, html, outlet, summary, time, title, autho
 
 }
 
+together %>% 
+  mutate(MainAuthor = case_when(str_detect(author, "Adam Wagner" ) ~ "Adam Wagner",
+                                str_detect(author, "Liz McLaughlin" ) ~ "Liz McLaughlin",
+                                str_detect(author, "John Deem" ) ~ "John Deem",
+                                str_detect(author, "Gareth McGrath" ) ~ "Gareth McGrath",
+                                str_detect(author, "David Boraks" ) ~ "David Boraks",
+                                str_detect(author, "Emily Jones" ) ~ "Emily Jones",
+                                str_detect(author, "Drew Kann" ) ~ "Drew Kann",
+                                str_detect(author, "Marisa Mecke" ) ~ "Marisa Mecke"))
+together <- together[, c(7, 1,2,3,4,5,6)]
+
+
 save(together, file="cleandataset.rda")
 
 #ok, so this works except for files where the outlet is listed incorrectly, have to pull those out separetly
