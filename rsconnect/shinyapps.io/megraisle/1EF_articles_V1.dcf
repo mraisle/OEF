@@ -1,0 +1,14 @@
+name: 1EF_articles_V1
+title: 1EF_articles_V1
+username:
+account: megraisle
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 7994976
+bundleId: 6711682
+url: https://megraisle.shinyapps.io/1EF_articles_V1/
+when: 1673242160.43919
+lastSyncTime: 1673242160.43921
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .RData|articlesummary.csv|batchselenium.COMMAND|chromedriver|logistics:financials/FORM W-9 (1).pdf|logistics:financials/mraisle_W-9_2022.pdf|logistics:financials/mraisle-1earth_invoice2.docx|logistics:financials/mraisle-1earth_invoice2.pdf|logistics:financials/W-9.pdf|looptorunhtml.R|newsapiattempts.R|RE question/TNC_powerofthewest.pdf|README.md|scraping attempts.R|scraping attempts2.R|selenium-server-4.7.2.jar|shinytesting.R|testing/adam_w_page1.html|testing/adam_w_page11.html|testing/adam_w_page3.html|testing/david_b_page2.html|testing/testingspecialfiles.R|testrselenium.R|testseleniumr.R|GANCsurveywork|muckrack|need to run special

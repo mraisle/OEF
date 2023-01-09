@@ -3,6 +3,8 @@
 library(rvest)
 library(stringr)
 library(xml2)
+library(anytime)
+library(dplyr)
 
 #make empty dataframe 
 together <- data.frame()
@@ -76,7 +78,17 @@ together %>%
                                 str_detect(author, "Emily Jones" ) ~ "Emily Jones",
                                 str_detect(author, "Drew Kann" ) ~ "Drew Kann",
                                 str_detect(author, "Marisa Mecke" ) ~ "Marisa Mecke"))
+
+together$links <- paste0("<a href='",together$links,"'>","Link to Article","</a>")
+colnames(together) <- c("Article Title", "Key Author", "Date Published", "News Outlet","Preview","Link","All Authors")
+together$`Date Published` <- anydate(together$`Date Published`)
+
+
+#this is wrong look at bottom of testing special files for better here
 together <- together[, c(7, 1,2,3,4,5,6)]
+
+
+
 
 
 save(together, file="cleandataset.rda")
