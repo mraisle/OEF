@@ -5,23 +5,30 @@ library(dplyr)
 library(tidyr)
 library(shiny)
 library(shinythemes)
+library(shinyjs)
+
+#try to add password protection
+# Define the correct username and password
+correct_username <- "user"
+correct_password <- "elmo"
 
 #load data
 
 data <- read.csv("fulldata2.csv")
 data = subset(data, select = -c(X))
 
-  
+
 #UI
 ui <- fluidPage(theme = shinytheme("cerulean"),
+                shinyjs::useShinyjs(),
+                div(id = "login_page",
+                    textInput("username", "Username"),
+                    passwordInput("password", "Password"),
+                    actionButton("login_button", "Login")
+                ),
+                hidden(
+                div(id = "main_page",
                 titlePanel("Local Climate News Article Database"),
-                p("A place to find articles from journalists in the U.S. Southeast that focus on issues of climate and the environment.This database currently contains articles from the following journalists:"),
-                em("-Liz McLaughlin, Adam Wagner, John Deem, Gareth McGrath, David Boraks, Emily Jones,Drew Kann, Marisa Mecke"),
-                br(),
-                br(),
-                p(HTML("To search within a <strong><em>date range</em></strong>, use the widget below. To filter by <strong><em>Author</em></strong>, use the search bar above the 'Key Author' column. 
-                   To search via <strong><em>keyword</em></strong>, use the global search bar to the lower right.
-                  The button below will download a .csv of the table with the filters you have selected", align="center")),
                 fluidRow(
                   column(6,wellPanel(
                     dateRangeInput('dateRange',
@@ -33,7 +40,24 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                   
                fluidRow(
                         DTOutput("dynamic",))
+                )
+                )
 )
+
+server <- function(input, output, session) {
+  observeEvent(input$login_button, {
+    if (input$username == correct_username && input$password == correct_password) {
+      shinyjs::hide("login_page")
+      shinyjs::show("main_page")
+    } else {
+      showModal(modalDialog(
+        title = "Error",
+        "Incorrect username or password. Please try again.",
+        easyClose = TRUE
+      ))
+    }
+  })
+}
 
 #SERVER
 server <- function(input, output, session) {

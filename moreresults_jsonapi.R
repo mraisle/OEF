@@ -10,6 +10,7 @@ library(httr)
 library(jsonlite)
 library(urltools)
 library(dplyr)
+library(purrr)
 
 api_key <- "AIzaSyB26Mrd8hBSrH6Xf8-hlPoIy8qcJUiFmPM"
 cx <- "54eb2ef59694f4f6f"
@@ -25,23 +26,22 @@ fetch_search_results <- function(api_key, cx, query, start = 1) {
 
 # Create a function to extract the relevant data from a search result item
 extract_data <- function(item) {
-  title <- item$title
-  url <- item$link
+  title <- item$title %||% NA_character_
+  url <- item$link %||% NA_character_
   
-  publication_date <- NULL
-  if (!is.null(item$pagemap$newsarticle)) {
+  publication_date <- NA_character_
+  if (!is.null(item$pagemap$newsarticle) && !is.null(item$pagemap$newsarticle[[1]]$datepublished)) {
     publication_date <- item$pagemap$newsarticle[[1]]$datepublished
-  } else if (!is.null(item$pagemap$metatags)) {
+  } else if (!is.null(item$pagemap$metatags) && !is.null(item$pagemap$metatags[[1]]$`article:published_time`)) {
     publication_date <- item$pagemap$metatags[[1]]$`article:published_time`
   }
   
-  description <- NULL
-  
-  if (!is.null(item$pagemap$metatags)) {
+  description <- NA_character_
+  if (!is.null(item$pagemap$metatags) && !is.null(item$pagemap$metatags[[1]]$`og:description`)) {
     description <- item$pagemap$metatags[[1]]$`og:description`
   }
   
-  source <- NULL
+  source <- NA
   if (is.character(url)) {
     parsed_url <- url_parse(url)
     source <- parsed_url$domain
@@ -55,7 +55,7 @@ extract_data <- function(item) {
 search_results <- data.frame()
 
 # Loop through search results pages and fetch up to 50 results
-for (start in seq(1, 50, by = 10)) {
+for (start in seq(70, 120, by = 10)) {
   results <- fetch_search_results(api_key, cx, query, start)
   
   if (length(results$items) == 0) {
