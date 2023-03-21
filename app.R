@@ -8,7 +8,7 @@ library(shinythemes)
 
 #load data
 
-data <- read.csv("fulldata2.csv")
+data <- read.csv("fulldata_4.csv")
 data = subset(data, select = -c(X))
 
   

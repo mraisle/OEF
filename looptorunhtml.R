@@ -96,5 +96,13 @@ save(together, file="cleandataset.rda")
 #ok, so this works except for files where the outlet is listed incorrectly, have to pull those out separetly
 
 
+#ADD the target blank to the html links to make them open in new tab
 
+data2 <- data
+data2$Link <- sub(">", " target=\"_blank\">", data2$Link, fixed = TRUE)
 
+write.csv(data, "fulldata_3.csv")
+data <- read.csv("fulldata_3.csv")
+data$ID <- 1:nrow(data)
+
+df1$consecutive_numbers<-1:nrow(df1)

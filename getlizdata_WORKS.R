@@ -87,5 +87,37 @@ Liz <- search_results
 #make this data frame align with the existing data file and append 
 data <- read.csv("fulldata_3.csv")
 
+#fix publication Date 
 Liz$publication_date <- sub("T.*", "", Liz$publication_date)
 
+#fix URL
+link_text <- "Link to Article"
+Liz$url <- paste0("<a href='", Liz$url, "' target='_blank'>", link_text, "</a>")
+
+#add Key Author Column 
+
+Liz$Key.Author <- as.character("Liz McLaughlin")
+Liz$All.Authors <- as.character("")
+
+#remove bad row pulls from google 
+
+clean_Liz <- Liz[!grepl("Coverage", Liz$title),]
+clean_Liz <- clean_Liz[!grepl("Liz McLaughlin", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("Untitled", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("Untitled", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("Hurricane: Top Stories", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("Live updates: Russia's war in Ukraine", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("In-depth from WRAL Specialists", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("Top Local News", clean_Liz$title),]
+clean_Liz <- head(clean_Liz, - 6)
+clean_Liz <- clean_Liz[!grepl("WRAL In Depth", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("Climate in Crisis", clean_Liz$title),]
+
+
+#merge with the data file
+
+colnames(clean_Liz) <- c("Article.Title","Link","Date.Published","News.Outlet", "Preview", "Key.Author", "All.Authors")
+
+alltogethernow <- rbind(data, clean_Liz)
+
+write.csv(alltogethernow, "fulldata_4.csv")
