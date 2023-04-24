@@ -1,0 +1,13 @@
+name: articles_delete
+title: articles_delete
+username:
+account: megraisle
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 8627566
+bundleId: 6987113
+url: https://megraisle.shinyapps.io/articles_delete/
+when: 1679403090.88996
+lastSyncTime: 1679403090.88998
+asMultiple: FALSE
+asStatic: FALSE

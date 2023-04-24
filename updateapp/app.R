@@ -1,5 +1,12 @@
-library(shiny)
 library(DT)
+library(dplyr)
+library(tidyr)
+library(shiny)
+library(shinythemes)
+
+
+data <- read.csv("updateapp/smalldata.csv")
+data = subset(data, select = -c(X))
 
 # Server
 server <- function(input, output) {

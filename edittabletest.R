@@ -5,7 +5,7 @@ library(shiny)
 library(shinythemes)
 
 
-data <- read.csv("fulldata_3.csv")
+data <- read.csv("fulldata_4.csv")
 data = subset(data, select = -c(X.1))
 data = subset(data, select = -c(X))
 
@@ -25,7 +25,7 @@ server <- function(input, output) {
   # Reactive
   
   getListUnder <- reactive({
-    df <- data
+    df <- small
     df$Delete <- shinyInput(actionButton, nrow(df),'delete_',label = "Delete",icon=icon("trash"),
                             style = "color: red;background-color: white",
                             onclick = paste0('Shiny.onInputChange( \"delete_button\" , this.id, {priority: \"event\"})'))

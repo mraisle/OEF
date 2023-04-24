@@ -4,7 +4,7 @@ library(tidyr)
 library(shiny)
 library(shinythemes)
 
-data <- read.csv("smalldata.csv")
+data <- read.csv("fulldata_4.csv")
 data = subset(data, select = -c(X))
 
 # Server
@@ -21,7 +21,7 @@ server <- function(input, output) {
   
   # Reactive
   getListUnder <- reactive({
-    df <- small
+    df <- data
     df$Delete <- shinyInput(actionButton, nrow(df),'delete_',label = "Delete",icon=icon("trash"),
                             style = "color: red;background-color: white",
                             onclick = paste0('Shiny.onInputChange( \"delete_button\" , this.id, {priority: \"event\"})'))
@@ -42,6 +42,7 @@ server <- function(input, output) {
   
   # Render data.table
   output$print_mtcars <- renderDataTable({
+    
     final_df <- values$df
     table <- final_df %>%
       DT::datatable(filter = "none", rownames = F
@@ -50,26 +51,17 @@ server <- function(input, output) {
                                     fixedColumns = list(leftColumns = 2)),
                     escape=F)
   })
-  
-  # Download data as CSV
-  output$downloadData <- downloadHandler(
-    filename = function() {
-      paste("mtcars-", Sys.Date(), ".csv", sep="")
-    },
-    content = function(file) {
-      write.csv(values$df[, !colnames(values$df) %in% c("Delete", "ID")], file, row.names = FALSE)
-    }
-  )
 }
 
+
 # UI
-ui <- fluidPage(
-  titlePanel("Delete rows"),
+ui <- fluidPage(theme = shinytheme("cerulean"),
+  titlePanel("Local Climate News Article Database"),
   mainPanel(
-    DT::dataTableOutput("print_mtcars"),
-    downloadButton("downloadData", "Download Data as CSV")
+    DT::dataTableOutput("print_mtcars")
   )
 )
+
 
 # Run the application
 shinyApp(ui = ui, server = server)

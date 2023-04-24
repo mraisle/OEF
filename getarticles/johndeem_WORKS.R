@@ -25,8 +25,8 @@ get_search_results <- function(start_index, api_key, cx, query, date_range) {
   return(content)
 }
 
-query <- "liz mclaughlin"
-date_ranges <- c("20220601:20221031", "20221101:20230319")
+query <- "john deem"
+date_ranges <- c("20211201:20220731", "20220801:20221231", "20230101:20230423")
 
 
 extract_data <- function(item) {
@@ -85,7 +85,7 @@ print(search_results)
 Liz <- search_results
 
 #make this data frame align with the existing data file and append 
-data <- read.csv("fulldata_3.csv")
+#data <- read.csv("fulldata_3.csv")
 
 #fix publication Date 
 Liz$publication_date <- sub("T.*", "", Liz$publication_date)
@@ -96,28 +96,24 @@ Liz$url <- paste0("<a href='", Liz$url, "' target='_blank'>", link_text, "</a>")
 
 #add Key Author Column 
 
-Liz$Key.Author <- as.character("Liz McLaughlin")
+Liz$Key.Author <- as.character("John Deem")
 Liz$All.Authors <- as.character("")
 
 #remove bad row pulls from google 
 
-clean_Liz <- Liz[!grepl("Coverage", Liz$title),]
-clean_Liz <- clean_Liz[!grepl("Liz McLaughlin", clean_Liz$title),]
-clean_Liz <- clean_Liz[!grepl("Untitled", clean_Liz$title),]
-clean_Liz <- clean_Liz[!grepl("Untitled", clean_Liz$title),]
-clean_Liz <- clean_Liz[!grepl("Hurricane: Top Stories", clean_Liz$title),]
-clean_Liz <- clean_Liz[!grepl("Live updates: Russia's war in Ukraine", clean_Liz$title),]
-clean_Liz <- clean_Liz[!grepl("In-depth from WRAL Specialists", clean_Liz$title),]
-clean_Liz <- clean_Liz[!grepl("Top Local News", clean_Liz$title),]
-clean_Liz <- head(clean_Liz, - 6)
-clean_Liz <- clean_Liz[!grepl("WRAL In Depth", clean_Liz$title),]
-clean_Liz <- clean_Liz[!grepl("Climate in Crisis", clean_Liz$title),]
+clean_Liz <- Liz[!grepl("John Deem", Liz$title),]
+clean_Liz <- clean_Liz[!grepl("shots", clean_Liz$description),]
+clean_Liz <- clean_Liz[!grepl("Local briefs", clean_Liz$title),]
+
 
 
 #merge with the data file
 
 colnames(clean_Liz) <- c("Article.Title","Link","Date.Published","News.Outlet", "Preview", "Key.Author", "All.Authors")
 
-alltogethernow <- rbind(data, clean_Liz)
+write.csv(clean_Liz, "getarticles/johndeem.csv")
 
-write.csv(alltogethernow, "fulldata_4.csv")
+
+#alltogethernow <- rbind(data, clean_Liz)
+
+#write.csv(alltogethernow, "fulldata_4.csv")

@@ -1,0 +1,13 @@
+name: mtcars
+title: mtcars
+username:
+account: megraisle
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 8627335
+bundleId: 6987044
+url: https://megraisle.shinyapps.io/mtcars/
+when: 1679401855.04991
+lastSyncTime: 1679401855.04992
+asMultiple: FALSE
+asStatic: FALSE

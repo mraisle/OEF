@@ -1,0 +1,13 @@
+name: SEC_update
+title: SEC_update
+username:
+account: megraisle
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 8627427
+bundleId: 6987067
+url: https://megraisle.shinyapps.io/SEC_update/
+when: 1679402304.06159
+lastSyncTime: 1679402304.0616
+asMultiple: FALSE
+asStatic: FALSE
