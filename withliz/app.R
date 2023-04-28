@@ -8,18 +8,24 @@ library(RSQLite)
 library(DBI)
 
 # Load data
-data_file <- "fulldata_April2023.csv"
-if (file.exists(data_file)) {
-  data <- read.csv(data_file)
-} else {
-  data <- read.csv("fulldata_April2023.csv")
-}
+#data_file <- "fulldata_April2023.csv"
+#if (file.exists(data_file)) {
+ # data <- read.csv(data_file)
+#} else {
+ # data <- read.csv("fulldata_April2023.csv")
+#}
 
-data = subset(data, select = -c(X, X.1))
+#data = subset(data, select = -c(X, X.1))
 
 # Create a SQLite database to store the table data
 con <- dbConnect(SQLite(), "table_data.sqlite")
-dbWriteTable(con, "data_table", data, overwrite = TRUE)
+
+if (!dbExistsTable(con, "data_table")) {
+  data_file <- "fulldata_April2023.csv"
+  data <- read.csv(data_file)
+  data = subset(data, select = -c(X, X.1, All.Authors))
+  dbWriteTable(con, "data_table", data, overwrite = TRUE)
+}
 
 # UI
 ui <- fluidPage(
@@ -65,10 +71,11 @@ server <- function(input, output, session) {
   
   
   output$dynamic <- renderDT(
-    datatable(thedata() %>% filter(Date.Published >= input$dateRange[1] & Date.Published <= input$dateRange[2]),
-              options = list(pageLength = 10, autoWidth = TRUE),
-              filter = 'top', escape = FALSE,
-              editable = list(target = "cell", disable = list(columns = c(0)))
+    datatable(
+      thedata() %>% filter((is.na(Date.Published)) | (Date.Published >= input$dateRange[1] & Date.Published <= input$dateRange[2])),
+      options = list(pageLength = 10, autoWidth = TRUE),
+      filter = 'top', escape = FALSE,
+      editable = list(target = "cell", disable = list(columns = c(0)))
     )
   )
   
@@ -102,7 +109,7 @@ server <- function(input, output, session) {
     },
     content = function(file) {
       filtered_data <- thedata() %>%
-        filter(Date.Published >= input$dateRange[1] & Date.Published <= input$dateRange[2]) %>%
+        filter((is.na(Date.Published)) | (Date.Published >= input$dateRange[1] & Date.Published <= input$dateRange[2])) %>%
         .[input[["dynamic_rows_all"]], ]
       write.csv(filtered_data, file, row.names = FALSE)
     }
