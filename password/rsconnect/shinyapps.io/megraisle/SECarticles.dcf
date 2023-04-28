@@ -1,0 +1,14 @@
+name: SECarticles
+title: SECarticles
+username:
+account: megraisle
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 8627492
+bundleId: 7146225
+url: https://megraisle.shinyapps.io/SECarticles/
+when: 1682652383.0116
+lastSyncTime: 1682652383.01163
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: app_deleteworksnosave.R|app_tryediting.R

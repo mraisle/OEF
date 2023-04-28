@@ -6,26 +6,22 @@ library(shinythemes)
 library(shinyjs)
 library(RSQLite)
 library(DBI)
+library(crosstalk)
+library(DTedit)
 
 # Load data
-#data_file <- "fulldata_April2023.csv"
-#if (file.exists(data_file)) {
- # data <- read.csv(data_file)
-#} else {
- # data <- read.csv("fulldata_April2023.csv")
-#}
+data_file <- "fulldata_4.csv"
+if (file.exists(data_file)) {
+  data <- read.csv(data_file)
+} else {
+  data <- read.csv("data/fulldata_4.csv")
+}
 
-#data = subset(data, select = -c(X, X.1))
+#data = subset(data, select = -c(X))
 
 # Create a SQLite database to store the table data
 con <- dbConnect(SQLite(), "table_data.sqlite")
-
-if (!dbExistsTable(con, "data_table")) {
-  data_file <- "fulldata_April2023.csv"
-  data <- read.csv(data_file)
-  data = subset(data, select = -c(X, X.1, All.Authors))
-  dbWriteTable(con, "data_table", data, overwrite = TRUE)
-}
+dbWriteTable(con, "data_table", data, overwrite = TRUE)
 
 # UI
 ui <- fluidPage(
@@ -33,12 +29,12 @@ ui <- fluidPage(
   theme = shinytheme("cerulean"),
   titlePanel("Local Climate News Article Database"),
   p("A place to find articles from journalists in the U.S. Southeast that focus on issues of climate and the environment.This database currently contains articles from the following journalists:"),
-  em("-Liz McLaughlin, Adam Wagner, John Deem, Gareth McGrath, David Boraks, Emily Jones,Drew Kann, Marisa Mecke, Gautama Mehta, and Meris Lutz"),
+  em("-Liz McLaughlin, Adam Wagner, John Deem, Gareth McGrath, David Boraks, Emily Jones,Drew Kann, Marisa Mecke"),
   br(),
   br(),
   p(HTML("To search within a <strong><em>date range</em></strong>, use the widget below. To filter by <strong><em>Author</em></strong>, use the search bar above the 'Key Author' column. 
-                   To search via <strong><em>keyword</em></strong>, use the global search bar to the lower right or the search bars above the 'Article Title' or 'Preview' columns.
-                  The button below will download a .csv of the table with the filters you have selected.")),
+                   To search via <strong><em>keyword</em></strong>, use the global search bar to the lower right.
+                  The button below will download a .csv of the table with the filters you have selected", align = "center")),
   fluidRow(
     column(6, wellPanel(
       dateRangeInput('dateRange',
@@ -51,18 +47,17 @@ ui <- fluidPage(
   
   fluidRow(
     column(6, actionButton("delete_rows", "Delete Selected Rows")),
-    column(6, actionButton("undo_delete", "Undo Delete")),
+    column(6, actionButton("save_changes", "Save Changes"))
   ),
   
   fluidRow(
-    DTOutput("dynamic")
+    DTedit::DTeditOutput("dynamic")
   )
 )
 
 # SERVER
 server <- function(input, output, session) {
   thedata <- reactiveVal()
-  previous_data <- reactiveVal()
   
   # Load data from the SQLite database
   observe({
@@ -71,29 +66,35 @@ server <- function(input, output, session) {
   })
   
   
-  output$dynamic <- renderDT(
-    datatable(
-      thedata() %>% filter((is.na(Date.Published)) | (Date.Published >= input$dateRange[1] & Date.Published <= input$dateRange[2])),
-      options = list(pageLength = 10, autoWidth = TRUE),
-      filter = 'top', escape = FALSE,
-      editable = list(target = "cell", disable = list(columns = c(0)))
-    )
+  dt_edit = dtedit(
+    input, output,
+    name = 'dynamic',
+    thedata = thedata(),
+    edit.cols = colnames(thedata()),
+    view.cols = colnames(thedata()),
+    callback.update = function(data, olddata) {
+      # Save the edited data to the SQLite database
+      dbWriteTable(con, "data_table", data, overwrite = TRUE)
+      return(data)
+    },
+    callback.delete = function(data, row) {
+      # Save the updated data to the SQLite database after deleting a row
+      dbWriteTable(con, "data_table", data, overwrite = TRUE)
+      return(data)
+    }
   )
+  output$dynamic <- dt_edit$datatable
   
   observeEvent(input$delete_rows, {
     selected_rows <- input$dynamic_rows_selected
     if (!is.null(selected_rows)) {
-      previous_data(thedata()) # Store the current dataset before deletion
       new_data <- thedata()[-selected_rows, ]
       thedata(new_data)
     }
   })
   
-  observeEvent(input$undo_delete, {
-    if (!is.null(previous_data())) {
-      thedata(previous_data()) # Restore the previous dataset
-      previous_data(NULL) # Clear previous_data to prevent multiple undos
-    }
+  observeEvent(input$save_changes, {
+    write.csv(thedata(), data_file, row.names = FALSE)
   })
   
   proxy <- dataTableProxy("dynamic")
@@ -105,7 +106,8 @@ server <- function(input, output, session) {
     j <- info$col + 1
     v <- info$value
     thedata()[i, j] <<- DT::coerceValue(v, thedata()[i, j])
-    replaceData(proxy, thedata(), resetPaging = FALSE)
+    replaceData(proxy, thedata(), resetPaging = FALSE, rownames = FALSE)
+    dbWriteTable(con, "data_table", thedata(), overwrite = TRUE)
   })
   
   output$downLoadFilter <- downloadHandler(
@@ -114,14 +116,14 @@ server <- function(input, output, session) {
     },
     content = function(file) {
       filtered_data <- thedata() %>%
-        filter((is.na(Date.Published)) | (Date.Published >= input$dateRange[1] & Date.Published <= input$dateRange[2])) %>%
+        filter(Date.Published >= input$dateRange[1] & Date.Published <= input$dateRange[2]) %>%
         .[input[["dynamic_rows_all"]], ]
       write.csv(filtered_data, file, row.names = FALSE)
     }
   )
   
   # Save data to the SQLite database every 60 seconds
-  autoSaveInterval <- 45 * 1000 # 45 seconds in milliseconds
+  autoSaveInterval <- 30 * 1000 # 30 seconds in milliseconds
   autoSave <- reactiveTimer(autoSaveInterval)
   observe({
     autoSave()
