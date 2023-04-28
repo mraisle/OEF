@@ -6,19 +6,42 @@ library(shinythemes)
 library(shinyjs)
 library(RSQLite)
 library(DBI)
+library(shinymanager)
+library(scrypt)
 
-# Load data
-#data_file <- "fulldata_April2023.csv"
-#if (file.exists(data_file)) {
- # data <- read.csv(data_file)
-#} else {
- # data <- read.csv("fulldata_April2023.csv")
-#}
+inactivity <- "function idleTimer() {
+var t = setTimeout(logout, 120000);
+window.onmousemove = resetTimer; // catches mouse movements
+window.onmousedown = resetTimer; // catches mouse movements
+window.onclick = resetTimer;     // catches mouse clicks
+window.onscroll = resetTimer;    // catches scrolling
+window.onkeypress = resetTimer;  //catches keyboard actions
 
-#data = subset(data, select = -c(X, X.1))
+function logout() {
+window.close();  //close the window
+}
+
+function resetTimer() {
+clearTimeout(t);
+t = setTimeout(logout, 120000);  // time is in milliseconds (1000 is 1 second)
+}
+}
+idleTimer();"
+
+password <- scrypt::hashPassword("bolt4ever!")
+
+# data.frame with credentials info
+credentials <- data.frame(
+  user = c("puffins", "meg", "diogo", "1earth"),
+  password = password,
+  is_hashed_password = TRUE,
+  # comment = c("alsace", "auvergne", "bretagne"), %>% 
+  stringsAsFactors = FALSE
+)
+
 
 # Create a SQLite database to store the table data
-con <- dbConnect(SQLite(), "table_data.sqlite")
+con <- dbConnect(SQLite(), "table_data.sqlite", autoconnect = TRUE)
 
 if (!dbExistsTable(con, "data_table")) {
   data_file <- "fulldata_April2023.csv"
@@ -28,7 +51,32 @@ if (!dbExistsTable(con, "data_table")) {
 }
 
 # UI
-ui <- fluidPage(
+ui <- secure_app(head_auth = tags$script(inactivity),
+                 fluidPage(
+                   tags$style(HTML("
+  .custom-button:not(:disabled) {
+    color: black !important;
+    border-color: #F200FF !important;
+  }
+  .custom-button:hover {
+    background-color: #F200FF !important;
+  }
+  .custom-button {
+    display: block;
+    margin: 0 auto;
+  }
+  .custom-button2:not(:disabled) {
+    color: black !important;
+    border-color: #00FF7F !important;
+  }
+  .custom-button2:hover {
+    background-color: #00FF7F !important;
+  }
+  .custom-button2 {
+    display: block;
+    margin: 0 auto;
+  }
+")),
   shinyjs::useShinyjs(),
   theme = shinytheme("cerulean"),
   titlePanel("Local Climate News Article Database"),
@@ -39,6 +87,12 @@ ui <- fluidPage(
   p(HTML("To search within a <strong><em>date range</em></strong>, use the widget below. To filter by <strong><em>Author</em></strong>, use the search bar above the 'Key Author' column. 
                    To search via <strong><em>keyword</em></strong>, use the global search bar to the lower right or the search bars above the 'Article Title' or 'Preview' columns.
                   The button below will download a .csv of the table with the filters you have selected.")),
+  br(),
+  p(HTML("<strong><em>Important Notes</em></strong>")),
+  p(HTML("To delete rows, click which rows you would like to delete. Selected rows will appear in blue. If you wish to unselect a row, simply click it again and it will return to a white background. When you click the 'Delete Selected Rows' button,
+  all of the rows selected in blue will be removed from the table. You can verify this by scrolling to the bottom of the page - in the bottom left
+  corner it will indicate how many rows are now in the table. 
+         If you deleted rows by mistake, you can press the 'Undo Delete' button. <em>NB - THIS BUTTON WILL ONLY UNDO THE MOST RECENT DELETION.</em> If you made an error and would like to restore rows, please contact Megan.")),
   fluidRow(
     column(6, wellPanel(
       dateRangeInput('dateRange',
@@ -50,30 +104,34 @@ ui <- fluidPage(
   ),
   
   fluidRow(
-    column(6, actionButton("delete_rows", "Delete Selected Rows")),
-    column(6, actionButton("undo_delete", "Undo Delete")),
+    column(6, actionButton("delete_rows", "Delete Selected Rows",class = "custom-button")),
+    column(6, actionButton("undo_delete", "Undo Delete", class = "custom-button2")),
   ),
-  
+  br(),
   fluidRow(
     DTOutput("dynamic")
   )
 )
+)
+
+
 
 # SERVER
 server <- function(input, output, session) {
-  thedata <- reactiveVal()
-  previous_data <- reactiveVal()
   
-  # Load data from the SQLite database
-  observe({
-    data_from_db <- dbReadTable(con, "data_table")
-    thedata(data_from_db)
+  result_auth <- secure_server(check_credentials = check_credentials(credentials))
+  
+  output$res_auth <- renderPrint({
+    reactiveValuesToList(result_auth)
   })
   
+   data_from_db <- dbReadTable(con, "data_table")
+  thedata <- reactiveValues(data = data_from_db)
+  previous_data <- reactiveVal()
   
   output$dynamic <- renderDT(
     datatable(
-      thedata() %>% filter((is.na(Date.Published)) | (Date.Published >= input$dateRange[1] & Date.Published <= input$dateRange[2])),
+      thedata$data %>% filter((is.na(Date.Published)) | (Date.Published >= input$dateRange[1] & Date.Published <= input$dateRange[2])),
       options = list(pageLength = 10, autoWidth = TRUE),
       filter = 'top', escape = FALSE,
       editable = list(target = "cell", disable = list(columns = c(0)))
@@ -83,16 +141,18 @@ server <- function(input, output, session) {
   observeEvent(input$delete_rows, {
     selected_rows <- input$dynamic_rows_selected
     if (!is.null(selected_rows)) {
-      previous_data(thedata()) # Store the current dataset before deletion
-      new_data <- thedata()[-selected_rows, ]
-      thedata(new_data)
+      previous_data(thedata$data) # Store the current dataset before deletion
+      new_data <- thedata$data[-selected_rows, ]
+      thedata$data <- new_data
+      dbWriteTable(con, "data_table", new_data, overwrite = TRUE) # Remove deleted rows from the database
     }
   })
   
   observeEvent(input$undo_delete, {
     if (!is.null(previous_data())) {
-      thedata(previous_data()) # Restore the previous dataset
+      thedata$data <- previous_data() # Restore the previous dataset
       previous_data(NULL) # Clear previous_data to prevent multiple undos
+      dbWriteTable(con, "data_table", thedata$data, overwrite = TRUE) # Update the database with the restored data
     }
   })
   
@@ -104,8 +164,8 @@ server <- function(input, output, session) {
     i <- info$row
     j <- info$col + 1
     v <- info$value
-    thedata()[i, j] <<- DT::coerceValue(v, thedata()[i, j])
-    replaceData(proxy, thedata(), resetPaging = FALSE)
+    thedata$data[i, j] <<- DT::coerceValue(v, thedata$data[i, j])
+    replaceData(proxy, thedata$data, resetPaging = FALSE)
   })
   
   output$downLoadFilter <- downloadHandler(
@@ -113,7 +173,7 @@ server <- function(input, output, session) {
       paste('Filtered data-', Sys.Date(), '.csv', sep = '')
     },
     content = function(file) {
-      filtered_data <- thedata() %>%
+      filtered_data <- thedata$data %>%
         filter((is.na(Date.Published)) | (Date.Published >= input$dateRange[1] & Date.Published <= input$dateRange[2])) %>%
         .[input[["dynamic_rows_all"]], ]
       write.csv(filtered_data, file, row.names = FALSE)
@@ -125,9 +185,10 @@ server <- function(input, output, session) {
   autoSave <- reactiveTimer(autoSaveInterval)
   observe({
     autoSave()
-    dbWriteTable(con, "data_table", thedata(), overwrite = TRUE)
+    dbWriteTable(con, "data_table", thedata$data, overwrite = TRUE)
   })
 }
+
 
 shinyApp(ui, server)
 

@@ -1,0 +1,14 @@
+name: SECdatabase
+title: SECdatabase
+username:
+account: megraisle
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 8977745
+bundleId: 7146935
+url: https://megraisle.shinyapps.io/SECdatabase/
+when: 1682661174.49031
+lastSyncTime: 1682661174.49033
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: table_data.sqlite
