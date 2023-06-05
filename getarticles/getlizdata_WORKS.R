@@ -26,7 +26,8 @@ get_search_results <- function(start_index, api_key, cx, query, date_range) {
 }
 
 query <- "liz mclaughlin"
-date_ranges <- c("20220601:20221031", "20221101:20230423")
+#date_ranges <- c("20220601:20221031", "20221101:20230423")
+date_ranges <- c("20230423:20230605")
 
 
 extract_data <- function(item) {
@@ -109,16 +110,18 @@ clean_Liz <- clean_Liz[!grepl("Hurricane: Top Stories", clean_Liz$title),]
 clean_Liz <- clean_Liz[!grepl("Live updates: Russia's war in Ukraine", clean_Liz$title),]
 clean_Liz <- clean_Liz[!grepl("In-depth from WRAL Specialists", clean_Liz$title),]
 clean_Liz <- clean_Liz[!grepl("Top Local News", clean_Liz$title),]
-clean_Liz <- head(clean_Liz, - 6)
+#clean_Liz <- head(clean_Liz, - 6)
 clean_Liz <- clean_Liz[!grepl("WRAL In Depth", clean_Liz$title),]
 clean_Liz <- clean_Liz[!grepl("Climate in Crisis", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("WRAL", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("biggest movies", clean_Liz$title),]
 
 
 #merge with the data file
 
 colnames(clean_Liz) <- c("Article.Title","Link","Date.Published","News.Outlet", "Preview", "Key.Author", "All.Authors")
 
-write.csv(clean_Liz, "getarticles/lizmc.csv")
+write.csv(clean_Liz, "getarticles/lizmc_june23.csv")
 
 
 alltogethernow <- rbind(data, clean_Liz)

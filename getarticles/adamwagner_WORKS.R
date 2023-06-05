@@ -26,7 +26,8 @@ get_search_results <- function(start_index, api_key, cx, query, date_range) {
 }
 
 query <- "adam wagner"
-date_ranges <- c("20210601:20211231", "20220101:20220731", "20220801:20221231", "20230101:20230423")
+#date_ranges <- c("20210601:20211231", "20220101:20220731", "20220801:20221231", "20230101:20230423")
+date_ranges <- c("20230423:20230605")
 
 
 extract_data <- function(item) {
@@ -103,13 +104,19 @@ Liz$All.Authors <- as.character("")
 
 clean_Liz <- Liz[!grepl("Utah", Liz$title),]
 clean_Liz <- clean_Liz[!grepl("Russia-Ukraine", clean_Liz$title),]
+clean_Liz <- na.omit(clean_Liz)
+clean_Liz <- clean_Liz[!grepl("debt ceiling", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("Memorial Day", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("Charlotte Observer", clean_Liz$title),]
+
+
 
 
 #merge with the data file
 
 colnames(clean_Liz) <- c("Article.Title","Link","Date.Published","News.Outlet", "Preview", "Key.Author", "All.Authors")
 
-write.csv(clean_Liz, "getarticles/adamwagner.csv")
+write.csv(clean_Liz, "getarticles/adamwagner_june23.csv")
 
 
 #alltogethernow <- rbind(data, clean_Liz)

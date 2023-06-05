@@ -26,7 +26,8 @@ get_search_results <- function(start_index, api_key, cx, query, date_range) {
 }
 
 query <- "Emily Jones"
-date_ranges <- c("20211201:20220731", "20220801:20221231", "20230101:20230423")
+#date_ranges <- c("20211201:20220731", "20220801:20221231", "20230101:20230423")
+date_ranges <- c("20230423:20230605")
 
 
 extract_data <- function(item) {
@@ -117,6 +118,13 @@ clean_Liz <- clean_Liz[!grepl("gaston", clean_Liz$source),]
 clean_Liz <- clean_Liz[!grepl("Emily Olson", clean_Liz$title),]
 clean_Liz <- clean_Liz[!grepl("newsobserver", clean_Liz$source),]
 clean_Liz <- clean_Liz[!grepl("squawk", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("WABE Archives", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("Grist.org", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("Cookbook", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("squawk", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("story/sports/", clean_Liz$url),]
+clean_Liz <- clean_Liz[!grepl("What's making us happy:", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("abortion", clean_Liz$title),]
 
 
 
@@ -127,7 +135,7 @@ clean_Liz <- clean_Liz[!grepl("squawk", clean_Liz$title),]
 
 colnames(clean_Liz) <- c("Article.Title","Link","Date.Published","News.Outlet", "Preview", "Key.Author", "All.Authors")
 
-write.csv(clean_Liz, "getarticles/emilyjones.csv")
+write.csv(clean_Liz, "getarticles/emilyjones_june23.csv")
 
 
 #alltogethernow <- rbind(data, clean_Liz)

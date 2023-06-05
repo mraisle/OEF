@@ -26,7 +26,8 @@ get_search_results <- function(start_index, api_key, cx, query, date_range) {
 }
 
 query <- "gareth mcgrath"
-date_ranges <- c("20210801:20211231", "20220101:20220731", "20220801:20221231", "20230101:20230423")
+#date_ranges <- c("20210801:20211231", "20220101:20220731", "20220801:20221231", "20230101:20230423")
+date_ranges <- c("20230423:20230605")
 
 
 extract_data <- function(item) {
@@ -102,13 +103,15 @@ Liz$All.Authors <- as.character("")
 #remove bad row pulls from google 
 
 clean_Liz <- Liz[!grepl("Gareth McGrath", Liz$title),]
+clean_Liz <- clean_Liz[!grepl("British royal family", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("StarNews", clean_Liz$title),]
 
 
 #merge with the data file
 
 colnames(clean_Liz) <- c("Article.Title","Link","Date.Published","News.Outlet", "Preview", "Key.Author", "All.Authors")
 
-write.csv(clean_Liz, "getarticles/garethmcgrath.csv")
+write.csv(clean_Liz, "getarticles/garethmcgrath_june23.csv")
 
 
 #alltogethernow <- rbind(data, clean_Liz)
