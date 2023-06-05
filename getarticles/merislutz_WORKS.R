@@ -26,7 +26,8 @@ get_search_results <- function(start_index, api_key, cx, query, date_range) {
 }
 
 query <- "meris lutz"
-date_ranges <- c("20220601:20221231", "20230101:20230423")
+#date_ranges <- c("20220601:20221231", "20230101:20230423")
+date_ranges <- c("20230423:20230605")
 
 
 extract_data <- function(item) {
@@ -107,7 +108,7 @@ clean_Liz <- Liz
 
 colnames(clean_Liz) <- c("Article.Title","Link","Date.Published","News.Outlet", "Preview", "Key.Author", "All.Authors")
 
-write.csv(clean_Liz, "getarticles/merislutz.csv")
+write.csv(clean_Liz, "getarticles/merislutz_june23.csv")
 
 
 #alltogethernow <- rbind(data, clean_Liz)

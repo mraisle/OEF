@@ -8,7 +8,7 @@ library(purrr)
 
 
 # Set the folder path where the .csv files are located
-folder_path <- "/Users/meganraisle/Documents/OEF/getarticles/author_data"
+folder_path <- "/Users/meganraisle/Documents/OEF/getarticles/author_data_june23"
 
 # List all .csv files in the folder
 csv_files <- list.files(path = folder_path, pattern = "\\.csv$", full.names = TRUE)
@@ -20,7 +20,7 @@ list_of_data_frames <- lapply(csv_files, read.csv)
 # Make sure the data frames have the same structure (columns) before merging
 combined_data_frame <- do.call(rbind, list_of_data_frames)
 
-write.csv(combined_data_frame, "fulldata_April2023.csv")
+write.csv(combined_data_frame, "fulldata_June2023.csv")
 
 #alltogethernow <- rbind(data, clean_Liz)
 

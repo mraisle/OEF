@@ -26,7 +26,8 @@ get_search_results <- function(start_index, api_key, cx, query, date_range) {
 }
 
 query <- "john deem"
-date_ranges <- c("20211201:20220731", "20220801:20221231", "20230101:20230423")
+#date_ranges <- c("20211201:20220731", "20220801:20221231", "20230101:20230423")
+date_ranges <- c("20230423:20230605")
 
 
 extract_data <- function(item) {
@@ -104,6 +105,28 @@ Liz$All.Authors <- as.character("")
 clean_Liz <- Liz[!grepl("John Deem", Liz$title),]
 clean_Liz <- clean_Liz[!grepl("shots", clean_Liz$description),]
 clean_Liz <- clean_Liz[!grepl("Local briefs", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("waterwork", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("Memorial Day", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("shot during ride", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("man sentenced", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("Letters to the editor", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("manager candidates", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("Hollywood", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("Archives", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("Inflation still", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("die in crash", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("Untitled", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("police", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("sports/", clean_Liz$url),]
+clean_Liz <- clean_Liz[!grepl("opinion/", clean_Liz$url),]
+clean_Liz <- clean_Liz[!grepl("dead in head-on", clean_Liz$title),]
+clean_Liz <- clean_Liz[!grepl("contests/", clean_Liz$url),]
+clean_Liz <- clean_Liz[!grepl("lifestyles/", clean_Liz$url),]
+clean_Liz <- clean_Liz[!grepl("entertainment/", clean_Liz$url),]
+clean_Liz <- clean_Liz[!grepl("politics-government/", clean_Liz$url),]
+clean_Liz <- clean_Liz[!grepl("debt-ceiling", clean_Liz$url),]
+clean_Liz <- clean_Liz[!grepl("book-bans", clean_Liz$url),]
+clean_Liz <- clean_Liz[!grepl("Hong Kong", clean_Liz$title),]
 
 
 
@@ -111,7 +134,7 @@ clean_Liz <- clean_Liz[!grepl("Local briefs", clean_Liz$title),]
 
 colnames(clean_Liz) <- c("Article.Title","Link","Date.Published","News.Outlet", "Preview", "Key.Author", "All.Authors")
 
-write.csv(clean_Liz, "getarticles/johndeem.csv")
+write.csv(clean_Liz, "getarticles/johndeem_june23.csv")
 
 
 #alltogethernow <- rbind(data, clean_Liz)
